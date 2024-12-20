@@ -43,7 +43,7 @@ def dependencies(env):
             subprocess.run(["pip3", "install", "requests", "beautifulsoup4"], check=True)
             print(f"\n{bold}lxml may take a while to build.\nPlease don't interrupt.{reset}")
             time.sleep(1)
-            command = 'export CFLAGS="-Wno-incompatible-function-pointer-types -Wno-implicit-function-declaration" && make'
+            command = 'export CFLAGS="-Wno-incompatible-function-pointer-types -Wno-implicit-function-declaration" && echo $CFLAGS'
             subprocess.run(command, shell=True, check=True)
             subprocess.run(["pip3", "install", "lxml"], check=True)
         
