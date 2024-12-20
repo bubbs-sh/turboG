@@ -45,9 +45,8 @@ def dependencies(env):
             time.sleep(1)
             command = 'export CFLAGS="-Wno-incompatible-function-pointer-types -Wno-implicit-function-declaration" && echo $CFLAGS'
             subprocess.run(command, shell=True, check=True)
-            subprocess.run(["pip3", "install", "lxml"], check=True)
-        
-            # subprocess.run(['CFLAGS="-O0"', "pip", "install", "lxml"], check=True)
+            subprocess.run('CFLAGS="-O0" pip install lxml', shell=True, check=True)
+
             time.sleep(1)
             print(f"\n{bold}Setup storage for termux{reset}")
             time.sleep(1)
