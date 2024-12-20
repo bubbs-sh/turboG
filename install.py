@@ -39,8 +39,9 @@ def dependencies(env):
             subprocess.run(["apt", "install","aria2", "-y"], check=True)
             subprocess.run(["pkg", "update", "-y"], check=True)
             subprocess.run(["pkg", "install", "ruby", "python3", "curl","-y"], check=True)
+            subprocess.run(["pkg", "install", "libxml2", "libxslt"])
             subprocess.run(["gem", "install", "lolcat"], check=True)
-            subprocess.run(["pip3", "install", "requests", "beautifulsoup4"], check=True)
+            subprocess.run(["pip3", "install", "requests", "beautifulsoup4", "cython"], check=True)
             print(f"\n{bold}lxml may take a while to build.\nPlease don't interrupt.{reset}")
             time.sleep(1)
             command = 'export CFLAGS="-Wno-incompatible-function-pointer-types -Wno-implicit-function-declaration" && echo $CFLAGS'
