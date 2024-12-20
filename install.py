@@ -43,8 +43,10 @@ def dependencies(env):
             subprocess.run(["pip3", "install", "requests", "beautifulsoup4"], check=True)
             print(f"\n{bold}lxml may take a while to build.\nPlease don't interrupt.{reset}")
             time.sleep(1)
-            subprocess.run(["export", 'CFLAGS="-Wno-incompatible-function-pointer-types -Wno-implicit-function-declaration"',], check=True)
-            subprocess.run(["pip", "install", "lxml"], check=True)
+            command = 'export CFLAGS="-Wno-incompatible-function-pointer-types -Wno-implicit-function-declaration" && make'
+            subprocess.run(command, shell=True, check=True)
+            subprocess.run(["pip3", "install", "lxml"], check=True)
+        
             # subprocess.run(['CFLAGS="-O0"', "pip", "install", "lxml"], check=True)
             time.sleep(1)
             print(f"\n{bold}Setup storage for termux{reset}")
