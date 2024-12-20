@@ -4,6 +4,7 @@ import os
 import platform
 import subprocess
 import sys
+import time
 
 bold = "\033[1m"
 reset = "\033[0m"
@@ -35,17 +36,21 @@ def dependencies(env):
         if env == "termux":
             print(f"{bold}Installing dependencies for Termux{reset}")
             subprocess.run(["apt", "update", "-y"], check=True)
+            subprocess.run(["apt", "install","aria2", "-y"], check=True)
             subprocess.run(["pkg", "update", "-y"], check=True)
             subprocess.run(["pkg", "install", "ruby", "python3", "curl","-y"], check=True)
             subprocess.run(["gem", "install", "lolcat"], check=True)
             subprocess.run(["pip3", "install", "requests", "beautifulsoup4"], check=True)
+            time.sleep(1)
             print(f"\n{bold}Setup storage for termux{reset}")
+            time.sleep(1)
             subprocess.run(["termux-setup-storage"], check=True)
 
 
         elif env == "linux":
             print(f"{bold}Installing dependencies for Linux{reset}")
             subprocess.run(["sudo", "apt", "update", "-y"], check=True)
+            subprocess.run(["sudo", "apt", "install","aria2", "-y"], check=True)
             subprocess.run(["sudo", "apt", "install", "python3", "ruby-full", "lolcat", "curl", "-y"], check=True)
             subprocess.run(["pip3", "install", "beautifulsoup4", "requests", "lxml"], check=True)
 
