@@ -49,13 +49,17 @@ def detect_env():
 def dependencies(env):
     try:
         if env == "termux":
+            print(f"\n{bold}Allow storage for Termux{reset}")
+            time.sleep(1.5)
+            subprocess.run(["termux-setup-storage"], check=True)
+            time.sleep(2)
             print(f"{bold}Installing dependencies for Termux{reset}")
             subprocess.run(["apt", "update", "-y"], check=True)
             subprocess.run(["apt", "upgrade", "-y"], check=True)
             subprocess.run(["apt", "install","aria2", "-y"], check=True)
             subprocess.run(["pkg", "update", "-y"], check=True)
             subprocess.run(["apt", "install", "ruby", "python3", "curl","-y"], check=True)
-            subprocess.run(["apt", "install", "libxml2", "libxslt" "-y"]) #these 2 are needed for lxml
+            subprocess.run(["pkg", "install", "libxml2", "libxslt" "-y"]) #these 2 are needed for lxml
             subprocess.run(["gem", "install", "lolcat"], check=True) # For cololized text effect
             subprocess.run(["pip3", "install", "requests", "beautifulsoup4", "cython"], check=True) # cython isfor lxml also
             print(f"\n{bold}lxml may take a while to build.\nPlease don't interrupt.{reset}")
@@ -64,9 +68,6 @@ def dependencies(env):
             subprocess.run(command, shell=True, check=True)
             subprocess.run('CFLAGS="-O0" pip install lxml', shell=True, check=True) # I got this from reddit, lol
             time.sleep(1)
-            print(f"\n{bold}Allow storage for Termux{reset}")
-            time.sleep(1.5)
-            subprocess.run(["termux-setup-storage"], check=True)
 
         elif env == "linux":
             print(f"{bold}Installing dependencies for Linux{reset}")
