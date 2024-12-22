@@ -17,7 +17,7 @@
     - ```sudo apt update```
     - ```sudo apt install git python3 -y```
  - For Termux
-    - ```apt update```
+    - ```apt update && apt upgrade -y```
     - ```apt install git python3 -y```
 
 #### Clone this repository
