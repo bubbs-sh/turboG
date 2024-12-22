@@ -17,8 +17,8 @@
     - ```sudo apt update```
     - ```sudo apt install git python3 -y```
  - For Termux
-    - ```pkg update```
-    - ```pkg install git python3 -y```
+    - ```apt update```
+    - ```apt install git python3 -y```
 
 #### Clone this repository
  - ```git clone https://github.com/bubbs-sh/turboG```
