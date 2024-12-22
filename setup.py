@@ -51,10 +51,11 @@ def dependencies(env):
         if env == "termux":
             print(f"{bold}Installing dependencies for Termux{reset}")
             subprocess.run(["apt", "update", "-y"], check=True)
+            subprocess.run(["apt", "upgrade", "-y"], check=True)
             subprocess.run(["apt", "install","aria2", "-y"], check=True)
             subprocess.run(["pkg", "update", "-y"], check=True)
-            subprocess.run(["pkg", "install", "ruby", "python3", "curl","-y"], check=True)
-            subprocess.run(["pkg", "install", "libxml2", "libxslt" "-y"]) #these 2 are needed for lxml
+            subprocess.run(["apt", "install", "ruby", "python3", "curl","-y"], check=True)
+            subprocess.run(["apt", "install", "libxml2", "libxslt" "-y"]) #these 2 are needed for lxml
             subprocess.run(["gem", "install", "lolcat"], check=True) # For cololized text effect
             subprocess.run(["pip3", "install", "requests", "beautifulsoup4", "cython"], check=True) # cython isfor lxml also
             print(f"\n{bold}lxml may take a while to build.\nPlease don't interrupt.{reset}")
