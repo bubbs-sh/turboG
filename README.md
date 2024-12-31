@@ -9,7 +9,7 @@
 </p>
 
 ### Description:
-***turboG is a command-line Python utility for downloading movies on Linux and Termux. It quickly scrapes torrent websites, grabs .torrent files, and launches your favorite torrent client - all in one go.***
+***turboG is a command-line Python utility for downloading movies on Linux and Termux. It quickly scrapes torrent websites, and download movies in just a few clicks.***
 
 ### Installation
 #### Install dependencies (git, python):
