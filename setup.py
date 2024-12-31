@@ -1,6 +1,6 @@
 """
 Author: Prince Addai Desmond @bubbs.sh
-Date: 2024-12-22
+Date: 2024-12-31
 Description: turboG or turboGranny is a command-line Python utility that scrapes 
              torrent websites,retrieves .torrent files, and automatically launches 
              a torrent client to begin downloading movies. 
@@ -87,7 +87,7 @@ def dependencies(env):
 
 
 def art():
-    version = "24.12.22"
+    version = "25.01.01"
     art = r'''
       (\_/)    {0}turboGranny{1} v{2}
      ( •_•)    Downloading dependencies
