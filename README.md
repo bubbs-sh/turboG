@@ -17,6 +17,7 @@
     - ```sudo apt update```
     - ```sudo apt install git python3 -y```
  - For Termux
+    - <a href="https://github.com/termux/termux-app/releases/tag/v0.118.1">Install Termux Here</a>
     - ```apt update && apt upgrade -y```
     - ```apt install git python3 -y```
 
@@ -40,6 +41,10 @@
 3. Choose resolution, if available
 4. Wait for it download
 5. Navigate to your Downloads folder and open the movie folder. Have fun!
+
+### Video Tutorial
+<a href="https://youtu.be/5aHGTncNcyc?si=LXb1enc9I-pTRvF7">turboG Installation & Usage</a>
+<br/>
 
 ### Features
  - Supports both Linux and Android
