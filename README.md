@@ -1,6 +1,6 @@
 <h1 align="center">TurboG</h1>
 <p align="center">
-  <img src="https://img.shields.io/badge/turboGranny-25.01.01-blue?style=for-the-badge">
+  <img src="https://img.shields.io/badge/turboGranny-25.04.14-blue?style=for-the-badge">
   <img src="https://img.shields.io/badge/license-MIT-E0E0E0?style=for-the-badge">
 <br>
 <br>
