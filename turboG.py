@@ -1,34 +1,45 @@
 """
-Author: Prince Addai Desmond @bubbs.sh
-Date: 2024-12-31
-Description: turboG or turboGranny is a command-line Python utility that scrapes 
-             torrent websites,retrieves .torrent files, and automatically launches 
-             a torrent client to begin downloading movies. 
-             It is designed use on Linux and Termux environments, offering a simple 
-             and fast way to download movies directly from the terminal. :)
+Author: Prince Addai Desmond | bubbs.sh
+Email: bubbs01.sh@gmail.com
+Github:github.com/bubbs-sh
+
+Date: 2025-04-14
+Description: turboG or turboGranny is a CLI Python utility that scrapes torrent
+             sites, retrieves torrent files, and automatically downloads them. 
+             It is designed to be used on Linux and Android(Termux), offering a simple 
+             and fast way to download movies directly from the terminal. ;)
 """
 
 #! /usr/bin/env python3
 
 from bs4 import BeautifulSoup
+import libtorrent as lt
 import os
 import platform
 import subprocess
 import sys
 import time
 import requests
+import warnings
+warnings.filterwarnings("ignore", category=DeprecationWarning)
 
-tmp_dir = "./.tmp/files"
+import libtorrent as lt
 
-# Colors variables
-bold = "\033[1m"
-bold_white = "\033[1;97m"
-gray = "\033[1;37m"
-red = "\033[1;91m"
-blue = "\033[1;94m"
-yellow = "\033[1;93m"
-reset = "\033[0m"
+ses = lt.session()
+ses.listen_on(6881, 6891)  # No warning shown now
 
+
+TMP_DIR = "./.tmp/files"
+
+# Colors class
+class COLORS:
+    bold = "\033[1m"
+    bold_white = "\033[1;97m"
+    gray = "\033[1;37m"
+    red = "\033[1;91m"
+    blue = "\033[1;94m"
+    yellow = "\033[1;93m"
+    reset = "\033[0m"
 
 
 def main():
@@ -37,7 +48,7 @@ def main():
         args = sys.argv[1:]
         query = '+'.join(args)
 
-        movie, title = scrape_page(query)
+        movie, title = scrape_yts(query)
         if movie == "none":
             print("Couldn't load movie's data")
             sys.exit(2)
@@ -47,9 +58,9 @@ def main():
             print("Couldn't load movie's sources")
             sys.exit(3)
             
-        clean(tmp_dir)
-        os.makedirs(tmp_dir, exist_ok=True)
-        os.chmod(tmp_dir, 0o755)
+        clean(TMP_DIR)
+        os.makedirs(TMP_DIR, exist_ok=True)
+        os.chmod(TMP_DIR, 0o755)
 
         try:
             name = name.split("/")
@@ -57,64 +68,51 @@ def main():
         except:
             pass
         filename = f"{name}.torrent"
-        path = os.path.join(tmp_dir, filename)
+        path = os.path.join(TMP_DIR, filename)
 
         try:
-            subprocess.run(["curl", "-o", path, url])
+            subprocess.run(["curl","-sS", "-o", path, url])
             time.sleep(1)
-            download_path = get_download()
+            download_path = get_download_path()
             time.sleep(1)
 
-            try:
-                unhide(download_path, title)
-                subprocess.run(["aria2c", "-d", download_path, path, "--allow-overwrite=true"], check=True)
-                
-                hide(download_path, title)
-                clean(tmp_dir)
-                print("\n\nOpen Downloads folder. Have fun!♥")
-                exit()
-            except subprocess.CalledProcessError as e:
-                clean(tmp_dir)
-                hide(download_path, title)
-                print(f"An error occurred while downloading with: {e}")
-            except FileNotFoundError:
-                clean(tmp_dir)
-                hide(download_path, title)
-                print(f"Error: aria2 is not installed.\n Please run: {bold}python3 setup.py{reset} to install missing dependencies")
+            unhide(download_path, title)
+            download_torrent(path)
+            hide(download_path, title)
 
         except subprocess.CalledProcessError as e:
-            clean(tmp_dir)
+            clean(TMP_DIR)
             hide(download_path, title)
             exit()
         except Exception as e:
-            clean(tmp_dir)
+            clean(TMP_DIR)
             hide(download_path, title)
             exit()
 
     except requests.exceptions.ConnectionError:
-        clean(tmp_dir)
+        clean(TMP_DIR)
         hide(download_path, title)
-        print(f"{red}Connect to the internet 🥲{red}")
+        print(f"{COLORS.red}Connect to the internet 🥲{COLORS.reset}")
         sys.exit(1)
     except KeyboardInterrupt:
         hide(download_path, title)
         
-        clean(tmp_dir)
+        clean(TMP_DIR)
         print("\nBai Baii ♥")
         sys.exit(0)
     except Exception:
-        clean(tmp_dir)
+        clean(TMP_DIR)
         hide(download_path, title)
         exit(1)
 
 
 # Deletes donwloaded torrents
-def clean(tmp_dir):
-    if os.path.exists(tmp_dir):
-        files = os.listdir(tmp_dir)
+def clean(TMP_DIR):
+    if os.path.exists(TMP_DIR):
+        files = os.listdir(TMP_DIR)
         if files:
             for file in files:
-                file_path = os.path.join(tmp_dir, file)
+                file_path = os.path.join(TMP_DIR, file)
                 try:
                     if os.path.isfile(file_path):
                         os.remove(file_path)
@@ -124,7 +122,7 @@ def clean(tmp_dir):
 
 
 # Scrapes the initial page
-def scrape_page(query):
+def scrape_yts(query):
     url = f"https://yts.mx/browse-movies/{query}"
     response = requests.get(url)
     soup = BeautifulSoup(response.text, "lxml")
@@ -143,16 +141,16 @@ def scrape_page(query):
     # Prints out each title in titles and link in links
     count = 1
     for title in titles:
-        print(f"[{count:02}]  {bold}{title}{reset}")
+        print(f"[{count:02}]  {COLORS.bold}{title}{COLORS.reset}")
         print()
         count += 1 
     
-    print(f"{red}[{count:02}] Exit{reset}")
+    print(f"{COLORS.red}[{count:02}] Exit{COLORS.reset}")
     print()
     print()
 
     while True:
-        number = int(input(f"{blue}Select a movie[01 - {count-1:02}]: {reset}"))
+        number = int(input(f"{COLORS.blue}Select a movie[01 - {count-1:02}]: {COLORS.reset}"))
         if not(number > count) and (number > 0):
             break 
 
@@ -189,19 +187,19 @@ def scrape_movie(url):
     else:
         print("Sumn's wrong, fs")
     
-    print(f"\n{yellow}Available Sources:{reset}\n")
+    print(f"\n{COLORS.yellow}Available Sources:{COLORS.reset}\n")
     for title in titles:
         if "Torrent" in title:
             title = title.replace("Torrent", "")
-        print(f"[{count:02}]  {bold}{title}{reset}")
+        print(f"[{count:02}]  {COLORS.bold}{title}{COLORS.reset}")
         print()
         count += 1
 
-    print(f"{red}[{count:02}] Go back{reset}")
+    print(f"{COLORS.red}[{count:02}] Go back{COLORS.reset}")
     print()
     print()
     
-    number = input(f"{blue}Select a resolution to download[01 - {count-1:02}]: {reset}")
+    number = input(f"{COLORS.blue}Select a resolution to download[01 - {count-1:02}]: {COLORS.reset}")
     while True:
         while not number.isnumeric():
             number = input(f"Select a resolution to download[1 - {count-1}]: ")
@@ -211,7 +209,7 @@ def scrape_movie(url):
             break 
 
     if number == count:
-        print("\n🔙 {}BACK{}\n".format(red,reset))
+        print("\n🔙 {}BACK{}\n".format(COLORS.red,COLORS.reset))
         main()
 
     for i in range(len(torrents)):
@@ -222,7 +220,7 @@ def scrape_movie(url):
 
 
 # Gets download path
-def get_download():
+def get_download_path():
     linux = os.path.expanduser("~/Downloads")
     termux = os.path.expanduser("~/storage/downloads")
 
@@ -276,22 +274,74 @@ def unhide(path, title):
                 except:
                     pass          
 
+def man():
+    manual = """
+    TurboGranny Movie Downloader
 
+    Usage:
+        python3 turboG.py 
+"""
+
+
+
+def download_torrent(path):
+    if not os.path.exists(path):
+        print(f"{COLORS.red}Error: .torrent not found{COLORS.reset}")
+        sys.exit() # TODO: give appropriate exit code
+
+    save_path = get_download_path()
+
+    ses = lt.session()
+    ses.listen_on(6881, 6891)
+
+    params = {''
+        'save_path': save_path,
+        'ti': lt.torrent_info(path),
+    }
+
+    handle = ses.add_torrent(params)
+
+    print(f"{COLORS.blue}Starting download:{COLORS.reset} {COLORS.bold}{handle.name()}{COLORS.reset}")
+    print(f"{COLORS.blue}Saving to:{COLORS.reset} {COLORS.bold}{save_path}{COLORS.reset}")
+    print(f"{COLORS.red}Press Ctrl+C to pause/stop downloading{COLORS.reset}\n")
+
+    try:
+        while True:
+            d = handle.status()
+
+            print("\rDownloading: %.f%% complete (%.1f/%.1f MB) down🠳: %.1f kB/s up🠱: %.1f kB/s peers: %d" % 
+                  ( d.progress * 100, d.total_done / (1024 * 1024), d.total_wanted / (1024 * 1024), d.download_rate / 1024, d.upload_rate / 1024,
+                   d.num_peers), end="  ")
+            
+            if d.is_seeding:
+                print(f"\n{COLORS.bold}Download complete!{COLORS.reset}")
+                break
+
+            time.sleep(1)
+    except KeyboardInterrupt:
+        print(f"\n{COLORS.bold}Pausing download...{COLORS.reset}")
+        handle.pause()
+        print(f"{COLORS.bold}Download Paused. You can resume later.{COLORS.reset}")  
+    except Exception as e:
+        print(f"\n{COLORS.red}An error occurred: {e}{COLORS.reset}")
+        return False
+    return True
+        
 
 # Skip :)
 def art():
     try:
         desc = "Fast and Simple Movie Downloader"
-        version = "25.01.01"
+        version = "25.04.14"
         author = "https://github.com/bubbs-sh/"
         art = r'''
       (\_/)    {3}turboGranny{4} v{0}
      ( •_•)    {1}
     / >♥< \    ~ {2} ~
-        '''.format(version, desc, author, bold, reset)
+        '''.format(version, desc, author, COLORS.bold, COLORS.reset)
         subprocess.run(f"echo \"{art}\" | lolcat", shell=True)
     except FileNotFoundError:
-        print(f"Missing dependencies, please install them.\nExecute: {bold}python3 install.py{reset}")  
+        print(f"Missing dependencies, please install them.\nExecute: {COLORS.bold}python3 install.py{COLORS.reset}")  
     except KeyboardInterrupt:
         pass
     except Exception:
