@@ -16,7 +16,7 @@
  - For Linux
     - ```sudo apt update```
     - ```sudo apt install git python3 -y```
- - For Termux
+ - For Android(Termux)
     - <a href="https://github.com/termux/termux-app/releases/tag/v0.118.1">Install Termux Here</a>
     - ```apt update && apt upgrade -y```
     - ```apt install git python3 -y```
